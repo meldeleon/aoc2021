@@ -1,61 +1,68 @@
+const { count } = require("console")
+
 let input = require("fs")
   .readFileSync("day3_input.txt")
   .toString()
   .split("\r\n")
-let columns = {}
-for (g = 0; g < 12; g++) {
-  columns[g] = []
+
+let o2 = input
+let co2 = input
+for (f = 0; f <= input[0].length; f++) {
+  if (o2.length === 1) {
+    console.log("o2 rating = " + o2)
+    break
+  }
+  let filteredData = filterbyDigit(o2, f)
+  o2 = filteredData.majoritySet
 }
 
-for (h = 0; h < input.length; h++) {
-  let hArray = input[h].split("")
-  for (i = 0; i < hArray.length; i++) {
-    columns[i].push(hArray[i])
+for (h = 0; h <= input[0].length; h++) {
+  if (co2.length === 1) {
+    console.log("co2 rating = " + co2)
+    break
+  } else {
+    let filteredData = filterbyDigit(co2, h)
+    co2 = filteredData.minoritySet
   }
 }
-let gamma = []
-let epsilon = []
-for (j = 0; j < 12; j++) {
+
+function filterbyDigit(dataSet, digit) {
+  // dataSet is array of numbers
+  // type is major or minor
+  // returns object with majoritySet/minoritySet
+  let digitSet = []
+  for (i = 0; i < dataSet.length; i++) {
+    digitSet.push(parseInt(dataSet[i][digit]))
+  }
+  let majority = returnMajority(digitSet)
+  //console.log("majority is: " + majority)
+  let minoritySet = []
+  let majoritySet = []
+  dataSet.forEach((x) => {
+    //console.log(x[digit])
+    if (parseInt(x[digit]) === majority) {
+      majoritySet.push(x)
+      //console.log(x[digit])
+    } else {
+      minoritySet.push(x)
+    }
+  })
+  return { majoritySet, minoritySet }
+}
+
+function returnMajority(arr) {
   let count0 = 0
   let count1 = 0
-  columns[j].forEach((x) => {
-    if (x === "0") {
+  arr.forEach((x) => {
+    if (x === 0) {
       count0++
     } else {
       count1++
     }
-    // console.log(count0, count1)
   })
-  if (count1 > count0) {
-    gamma.push(1)
-    epsilon.push(0)
+  if (count0 > count1) {
+    return 0
   } else {
-    gamma.push(0)
-    epsilon.push(1)
+    return 1
   }
 }
-console.log(gamma, epsilon)
-let o2rounds = {}
-for (g = 0; g < 13; g++) {
-  o2rounds[g] = []
-}
-o2rounds[0].push(input)
-let co2rounds = {}
-for (g = 0; g < 13; g++) {
-  co2rounds[g] = []
-}
-co2rounds[0].push(input)
-
-for (h = 0; h < o2rounds[h].length; h++) {
-  for (j = 0; j < o2rounds[h][j]; j++) {
-    for (i = 0; i < hArray.length; i++) {
-      let hArray = o2rounds[h][j].split("")
-      console.log(hArray[i], gamma[i])
-      if (parseInt(hArray[i]) === parseInt(gamma[i])) {
-        o2rounds[i].push(o2rounds[h + 1])
-      }
-    }
-    console.log(o2Rounds)
-  }
-}
-console.log(o2rounds[11], co2rounds[11])
