@@ -1,5 +1,3 @@
-const { count } = require("console")
-
 let input = require("fs")
   .readFileSync("day3_input.txt")
   .toString()
@@ -9,7 +7,7 @@ let o2 = input
 let co2 = input
 for (f = 0; f <= input[0].length; f++) {
   if (o2.length === 1) {
-    console.log("o2 rating = " + o2)
+    console.log("o2 rating = " + parseInt(o2, 2))
     break
   }
   let filteredData = filterbyDigit(o2, f)
@@ -18,13 +16,15 @@ for (f = 0; f <= input[0].length; f++) {
 
 for (h = 0; h <= input[0].length; h++) {
   if (co2.length === 1) {
-    console.log("co2 rating = " + co2)
+    console.log("co2 rating = " + parseInt(co2, 2))
     break
   } else {
     let filteredData = filterbyDigit(co2, h)
     co2 = filteredData.minoritySet
   }
 }
+
+console.log(parseInt(co2, 2) * parseInt(o2, 2))
 
 function filterbyDigit(dataSet, digit) {
   // dataSet is array of numbers
