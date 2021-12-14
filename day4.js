@@ -32,9 +32,7 @@ for (let i = 0; i < bingoAnswers.length; i++) {
 console.log(arrCards[0])
 
 function checkForAllCalled(numberSet) {
-  numberSet.forEach((number) => {
-    numbe
-  })
+  numberSet.forEach((number) => {})
 }
 
 function grabRawCards(data) {
