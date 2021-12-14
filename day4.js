@@ -2,7 +2,7 @@ let input = require("fs")
   .readFileSync("day4_input.txt")
   .toString()
   .split("\r\n")
-let bingoAnswers = input[0]
+let bingoAnswers = input[0].split(",")
 let rawCards = grabRawCards(input)
 let arrCards = []
 rawCards.forEach((x) => {
@@ -18,21 +18,71 @@ arrCards.forEach((card) => {
 })
 
 for (let i = 0; i < bingoAnswers.length; i++) {
+  let breakpoint = false
+  // iterate over all the cards
+  console.log(bingoAnswers[i])
   arrCards.forEach((card) => {
+    // check the number set in eachcard
     card.forEach((numberSet) => {
+      //check each number, if number matches the
       numberSet.forEach((number) => {
         if (parseInt(number.num) === parseInt(bingoAnswers[i])) {
           number.called = true
         }
+        console.log
       })
       //if numberset is all true break, and return
+      if (checkForAllCalled(numberSet) === true) {
+        let sum = sumUnchecked(card) + 8
+        let answer = sum * parseInt(bingoAnswers[i])
+        console.log(
+          "winning card is " +
+            arrCards.indexOf(card) +
+            " and the answer is: " +
+            answer
+        )
+        console.log(arrCards[arrCards.indexOf(card)])
+        breakpoint = true
+      }
     })
   })
+  if (breakpoint === true) {
+    console.log("breaking at number: " + bingoAnswers[i])
+    break
+  }
 }
-console.log(arrCards[0])
+
+function sumUnchecked(card) {
+  let unchecked = []
+  card.forEach((numberSet) => {
+    numberSet.forEach((number) => {
+      if (
+        !unchecked.includes(parseInt(number.num)) &&
+        number.called === false
+      ) {
+        unchecked.push(parseInt(number.num))
+      }
+    })
+  })
+  let sum = 0
+  for (let i = 0; i < unchecked.length; i++) {
+    sum += unchecked[i]
+  }
+  return sum
+}
 
 function checkForAllCalled(numberSet) {
-  numberSet.forEach((number) => {})
+  let count = 0
+  numberSet.forEach((number) => {
+    if (number.called === true) {
+      count++
+    }
+  })
+  if (count >= 5) {
+    return true
+  } else {
+    return false
+  }
 }
 
 function grabRawCards(data) {
