@@ -1,5 +1,5 @@
 let input = require("fs")
-  .readFileSync("day3_input.txt")
+  .readFileSync("day03_input.txt")
   .toString()
   .split("\r\n")
 

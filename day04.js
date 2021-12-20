@@ -1,5 +1,5 @@
 let input = require("fs")
-  .readFileSync("day4_input.txt")
+  .readFileSync("day04_input.txt")
   .toString()
   .split("\r\n")
 let bingoAnswers = input[0].split(",")
@@ -29,11 +29,18 @@ for (let i = 0; i < bingoAnswers.length; i++) {
         if (parseInt(number.num) === parseInt(bingoAnswers[i])) {
           number.called = true
         }
-        console.log
       })
       //if numberset is all true break, and return
       if (checkForAllCalled(numberSet) === true) {
-        let sum = sumUnchecked(card) + 8
+        //make sure we marked all numbers in the card as called that have been called
+        card.forEach((numberSet) => {
+          numberSet.forEach((number) => {
+            if (number.num === bingoAnswers[i]) {
+              number.called = true
+            }
+          })
+        })
+        let sum = sumUnchecked(card)
         let answer = sum * parseInt(bingoAnswers[i])
         console.log(
           "winning card is " +
@@ -41,7 +48,7 @@ for (let i = 0; i < bingoAnswers.length; i++) {
             " and the answer is: " +
             answer
         )
-        console.log(arrCards[arrCards.indexOf(card)])
+        console.log(card)
         breakpoint = true
       }
     })
@@ -111,3 +118,5 @@ function createBingoCard(data) {
   let card = columns.concat(rows)
   return card
 }
+
+function markOtherAnswer(card, answer) {}
