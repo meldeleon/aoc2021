@@ -4,88 +4,68 @@ let input = require("fs")
   .split("\r\n")
 let bingoAnswers = input[0].split(",")
 console.log(bingoAnswers)
-let rawCards = grabRawCards(input)
-let arrCards = []
-rawCards.forEach((x) => {
-  arrCards.push(createBingoCard(x))
+let arrCards = grabRawCards(input).map((x) => {
+  return createBingoCard(x)
 })
-//update numbers in cards array to be objects with called/not called
-arrCards.forEach((card) => {
-  card.forEach((numberSet) => {
-    for (let i = 0; i < numberSet.length; i++) {
-      numberSet.splice(i, 1, { num: numberSet[i], called: false })
+
+arrCards.forEach((card, index) => {
+  arrCards.splice(index, 1, {
+    numberSets: card.map((numberSet) => {
+      return {
+        answers: numberSet.map((number) => {
+          return { num: number, called: false }
+        }),
+        called: false,
+      }
+    }),
+    called: false,
+  })
+})
+let stop = false
+bingoAnswers.forEach((number, index) => {
+  let breakpoint = false
+  let bingoAnswer = parseInt(bingoAnswers[index])
+  arrCards.forEach((card) => {
+    if (!breakpoint) {
+      if (card.called === false) {
+        card.numberSets.forEach((numberSet) => {
+          numberSet.answers.forEach((number) => {
+            let currentNumber = parseInt(number.num)
+            if (bingoAnswer === currentNumber) {
+              number.called = true
+            }
+          })
+          markNumberSet(card.numberSets)
+        })
+        markCard(card)
+      }
+
+      //capture last card
+      let lastCardIndex = storeLastCardIndex(arrCards)
+      //if the number of false cards drops to 0
+
+      if (areAllCardsCalled(arrCards) && lastCardIndex && !stop) {
+        //mark anything on the last card, return answer
+        card.numberSets.every((numberSet) => {
+          numberSet.answers.every((number) => {
+            if (parseInt(number.num) === bingoAnswer) {
+              number.called = true
+            }
+          })
+        })
+        let losingCard = arrCards[lastCardIndex]
+        let sumOfUnchecked = sumUnchecked(losingCard)
+        let answer = sumOfUnchecked * bingoAnswer
+        console.log("the answer is " + answer)
+        console.log(losingCard)
+        console.log(bingoAnswer)
+        stop = true
+      }
     }
   })
 })
-
-let lastBingoAnswer = 0
-let lastBingoCard = []
-
-for (let i = 0; i < bingoAnswers.length; i++) {
-  let depletingCards = [...arrCards]
-  // iterate over all the cards
-  arrCards.forEach((card, cardIndex) => {
-    // check the number set in eachcard
-    card.forEach((numberSet) => {
-      //check each number, if number matches the bingoanswer called, mark as called
-      numberSet.forEach((number) => {
-        let bingoAnswer = parseInt(bingoAnswers[i])
-        let currentNumber = parseInt(number.num)
-        if (bingoAnswer === currentNumber) {
-          number.called = true
-          console.log(`marking ${currentNumber} as called on card ${cardIndex}`)
-        }
-      })
-      //if numberset is all true remove card from testDeck
-      if (checkForAllCalled(numberSet)) {
-        console.log("removing card " + cardIndex)
-        depletingCards.splice(cardIndex, 1, null)
-      }
-      //when down to the last card
-      if (checkForLastCard(depletingCards)) {
-        lastBingoCard = checkForLastCard(depletingCards)
-        lastBingoAnswer = i
-      }
-      k
-    })
-  })
-}
-
-console.log(lastBingoAnswer, lastBingoCard)
-
-function sumUnchecked(card) {
-  let unchecked = []
-  card.forEach((numberSet) => {
-    numberSet.forEach((number) => {
-      if (
-        !unchecked.includes(parseInt(number.num)) &&
-        number.called === false
-      ) {
-        unchecked.push(parseInt(number.num))
-      }
-    })
-  })
-  let sum = 0
-  for (let i = 0; i < unchecked.length; i++) {
-    sum += unchecked[i]
-  }
-  return sum
-}
-
-function checkForAllCalled(numberSet) {
-  let count = 0
-  numberSet.forEach((number) => {
-    if (number.called === true) {
-      count++
-    }
-  })
-  if (count >= 5) {
-    return true
-  } else {
-    return false
-  }
-}
-
+// console.log(arrCards[0].numberSets[0])
+// console.log(arrCards)
 function grabRawCards(data) {
   let cardData = []
   let cardArray = []
@@ -113,18 +93,70 @@ function createBingoCard(data) {
   return card
 }
 
-function checkForLastCard(cardArray) {
-  let nullCount = 0
-  let notNullCard = []
-  cardArray.forEach((card) => {
-    if (card === null) {
-      nullCount++
-    } else {
-      notNullCard = card
+function markNumberSet(numberSets) {
+  numberSets.forEach((numberSet) => {
+    let count = 0
+    numberSet.answers.forEach((number) => {
+      if (number.called === true) {
+        count++
+      } else {
+      }
+    })
+    if (count === 5) {
+      numberSet.called = true
     }
   })
-  if (nullCount === cardArray.length - 1) {
-    return notNullCard //probably truthy?????
+}
+
+function markCard(card) {
+  card.numberSets.forEach((answerSet) => {
+    if (answerSet.called) {
+      card.called = true
+    }
+  })
+}
+
+function sumUnchecked(card) {
+  let unchecked = []
+  card.numberSets.forEach((numberSet) => {
+    numberSet.answers.forEach((number) => {
+      if (
+        !unchecked.includes(parseInt(number.num)) &&
+        number.called === false
+      ) {
+        unchecked.push(parseInt(number.num))
+      }
+    })
+  })
+  let sum = 0
+  for (let i = 0; i < unchecked.length; i++) {
+    sum += unchecked[i]
+  }
+  return sum
+}
+
+function storeLastCardIndex(cards) {
+  let calledCardsCount = 0
+  for (let i = 0; i < cards.length; i++) {
+    if (cards[i].called === true) {
+      calledCardsCount++
+    }
+    let difference = cards.length - calledCardsCount
+    if (difference === 1) {
+      return i
+    }
+  }
+}
+function areAllCardsCalled(cards) {
+  let totalCards = parseInt(cards.length)
+  let calledCards = 0
+  cards.forEach((card) => {
+    if (card.called) {
+      calledCards++
+    }
+  })
+  if (totalCards === calledCards) {
+    return true
   } else {
     return false
   }
