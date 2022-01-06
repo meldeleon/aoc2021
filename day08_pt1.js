@@ -1,5 +1,3 @@
-const { Console } = require("console")
-
 let input = require("fs")
   .readFileSync("day08_input.txt")
   .toString()
