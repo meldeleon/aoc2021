@@ -1,3 +1,4 @@
+const { abort } = require("process")
 const { unzipSync } = require("zlib")
 
 let data = require("fs")
@@ -32,43 +33,57 @@ data.forEach((row) => {
       //console.log(`could not assign ${digit} to a value`)
     }
   })
-  console.log(digitAssignments)
 
-  inputArray.forEach( digit => {
-     digitAssignments[1].includes
-
-      switch (digit.length){
-          case 6:
-              //0
-              if ()
-      }
+  inputArray.forEach((digit) => {
+    switch (digit.length) {
+      case 5:
+        //1
+        let oneCount = createCount(1, digitAssignments)
+        //4
+        let fourCount = createCount(4, digitAssignments)
+        // 7
+        let sevenCount = createCount(7, digitAssignments)
+        let sum = oneCount + fourCount + sevenCount
+        console.log(digit, sum)
+        if (sum === 6) {
+          digitAssignments[2] = digit.split("")
+        } else if (sum === 8) {
+          digitAssignments[3] = digit.split("")
+        }
+        break
+      case 6:
+        let oneCount2 = createCount(1, digitAssignments)
+        let twoCount2 = createCount(2, digitAssignments)
+        let threeCount2 = createCount(3, digitAssignments)
+        let fourCount2 = createCount(4, digitAssignments)
+        let sevenCount2 = createCount(7, digitAssignments)
+        let sum2 =
+          oneCount2 + twoCount2 + threeCount2 + fourCount2 + sevenCount2
+        console.log(digit, sum2)
+        if (sum2 === 16) {
+          digitAssignments[0] = digit.split("")
+        } else if (sum === 13) {
+          digitAssignments[5] = digit.split("")
+        } else if (sum2 === 14) {
+          digitAssignments[6] = digit.split("")
+        } else if (sum2 === 9) {
+          digitAssignments[9] = digit.split("")
+        }
+        break
+      default:
+    }
   })
-
+  console.log(digitAssignments)
 })
-/* NOTES
-0 = abcefg // 6 digits, matches all digits for 1,missing one digit for 4 (d), matches all digits 7, and one digit for 8 (d)
-6 = abdefg // 6 digits, missing 1 digit for 1 (f), missing 1 digit from 4 (c), missing 1 digit from 7 (c), and 1 digit from 8 (c)
-9 = abcdfg // 6 digits, matches all digits for 1, matches all digits for 4, matches all digits for 7, missing 1 digit from 8 (e) 
 
-we can assign d,  assign c,  assign e
+function createCount(comparator, digitAssignments) {
+  let count = 0
+  digitAssignments[comparator].forEach((letter) => {
+    count++
+  })
+  return count
+}
 
-
-2 = acdeg // 5 digits, matches one digit for 1/2 (c), matches 3/4 digits for four(cdg), matches all digits for 7, matches 5 digits for 8
-3 = acdfg // 5 digits
-5 = abdfg // 5 digits
-
-
-**1 = cf // 2 digits 
-**4 = bcdf // 4 digits
-**7 = acf // 3 digits
-**8 = abcdefg // 7 digits
-
-
-
-
-c is included in 1,4,7,8
-f is inlcluded in 1,4,5,7,8
-
-
-
-*/
+digitAssignments[7].forEach((letter) => {
+  sevenCount2++
+})

@@ -1,14 +1,9 @@
-let allCards =
-
-function checkIfEverythingIsCalledButOne(allCards) {
-    let falseCount = 0
-    allCards.forEach((card) => {
-      card.forEach((numberSet) => {
-        if (!checkForAllCalled(numberSet)) {
-          falseCount++
-        }
-      })
-    })
-    console.log(falseCount)
-    if (falseCount === 1) return true
+let a = ["c", "f"]
+let b = ["a", "b", "d", "f", "g"]
+count = 0
+a.forEach((letter) => {
+  if (b.includes(letter)) {
+    count++
   }
+})
+console.log(count)
