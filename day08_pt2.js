@@ -1,3 +1,4 @@
+const { createSecretKey } = require("crypto")
 const { abort } = require("process")
 const { unzipSync } = require("zlib")
 
@@ -33,57 +34,33 @@ data.forEach((row) => {
       //console.log(`could not assign ${digit} to a value`)
     }
   })
-
+  console.log(digitAssignments)
   inputArray.forEach((digit) => {
     switch (digit.length) {
-      case 5:
-        //1
-        let oneCount = createCount(1, digitAssignments)
-        //4
-        let fourCount = createCount(4, digitAssignments)
-        // 7
-        let sevenCount = createCount(7, digitAssignments)
-        let sum = oneCount + fourCount + sevenCount
-        console.log(digit, sum)
-        if (sum === 6) {
-          digitAssignments[2] = digit.split("")
-        } else if (sum === 8) {
-          digitAssignments[3] = digit.split("")
-        }
-        break
       case 6:
-        let oneCount2 = createCount(1, digitAssignments)
-        let twoCount2 = createCount(2, digitAssignments)
-        let threeCount2 = createCount(3, digitAssignments)
-        let fourCount2 = createCount(4, digitAssignments)
-        let sevenCount2 = createCount(7, digitAssignments)
-        let sum2 =
-          oneCount2 + twoCount2 + threeCount2 + fourCount2 + sevenCount2
-        console.log(digit, sum2)
-        if (sum2 === 16) {
+        let oneCountA = createCount(1, digitAssignments, digit)
+        let fourCountA = createCount(4, digitAssignments, digit)
+        let sevenCountA = createCount(7, digitAssignments, digit)
+        let sumA = oneCountA + fourCountA + sevenCountA
+        if (sumA === 8) {
           digitAssignments[0] = digit.split("")
-        } else if (sum === 13) {
-          digitAssignments[5] = digit.split("")
-        } else if (sum2 === 14) {
+        } else if (sumA === 6) {
           digitAssignments[6] = digit.split("")
-        } else if (sum2 === 9) {
+        } else if (sumA === 9) {
           digitAssignments[9] = digit.split("")
         }
         break
-      default:
     }
   })
   console.log(digitAssignments)
 })
 
-function createCount(comparator, digitAssignments) {
+function createCount(comparator, digitAssignments, digit) {
   let count = 0
   digitAssignments[comparator].forEach((letter) => {
-    count++
+    if (digit.includes(letter)) {
+      count++
+    }
   })
   return count
 }
-
-digitAssignments[7].forEach((letter) => {
-  sevenCount2++
-})
