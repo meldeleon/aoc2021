@@ -62,9 +62,10 @@ data.forEach((row) => {
   })
   //console.log(digitAssignments)
   solutionsToSum.push(parseOutput(digitAssignments, outputArray))
-  let finalAnswer = solutionsToSum.reduce(add, 0)
-  console.log({ finalAnswer })
 })
+
+let finalAnswer = solutionsToSum.reduce(add, 0)
+console.log({ finalAnswer })
 
 function createCount(comparator, digitAssignments, digit) {
   let count = 0
